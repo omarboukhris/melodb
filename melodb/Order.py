@@ -1,20 +1,7 @@
 
 from loggers import ILogger
-from dataclasses import dataclass
 
-@dataclass
 class Order:
-
-	order_id: str
-	status: str
-	symbol: str
-	instrument: str
-	type: str
-	side: str
-	price: str
-	quantity: str
-	open_ts: str
-	close_ts: str
 
 	def __init__(self, order: dict, logger: ILogger = ILogger("Order_DataClass")):
 		self.logger = logger

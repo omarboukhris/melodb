@@ -1,6 +1,8 @@
 
-import sqlite3
 from melodb.loggers import ILogger
+from Order import Order
+import sqlite3
+
 
 class OrderBookManager:
 
@@ -97,16 +99,7 @@ class OrderBookManager:
 
 	@staticmethod
 	def labels():
-		return [
-			"order_id",
-			"status",      # Open/Closed
-			"symbol",      # EURUSD ...
-			"instrument",  # CFD, OPT, FUT
-			"type",        # LMT, MKT
-			"side",        # BUY, SELL
-			"price",
-			"quantity"
-		]
+		return Order.labels()
 
 	def __del__(self):
 		self.close()
@@ -127,7 +120,9 @@ if __name__ == "__main__":
 		"type": "mkt",  # LMT, MKT
 		"side": "buy",  # BUY, SELL
 		"price": "2000",
-		"quantity": "1"
+		"quantity": "1",
+		"open_ts": "odate",
+		"close_ts": "cdate"
 	}
 
 	orderbook = OrderBookManager("orderbook-melo.db", loggers)
