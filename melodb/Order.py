@@ -1,11 +1,16 @@
 
 from loggers import ILogger
 
+
 class Order:
 
-	BUY = "long"
-	SELL = "short"
+	class Side:
+		BUY = "long"
+		SELL = "short"
 
+	class Status:
+		OPEN = "open"
+		CLOSED = "closed"
 
 	def __init__(self, logger: ILogger = ILogger("Order_DataClass"), **order):
 		self.logger = logger
@@ -30,7 +35,7 @@ class Order:
 	def empty():
 		return Order(
 			order_id=0,
-			status="close",
+			status=Order.Status.CLOSED,
 			symbol="",
 			instrument="",
 			order_type="",
