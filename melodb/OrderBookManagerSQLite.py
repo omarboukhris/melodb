@@ -4,9 +4,9 @@ from Order import Order
 import sqlite3
 
 
-class OrderBookManager:
+class OrderBookManagerSQLite:
 
-	component_name = "OrderBookManager"
+	component_name = "OrderBookManagerMongo"
 
 	def __init__(self, dbfile: str, logger: ILogger = ILogger(component_name)):
 		"""
@@ -16,7 +16,7 @@ class OrderBookManager:
 		self.dbfile = dbfile
 		self.db_connection = None
 		self.connected = False
-		self.logger = logger if logger is not None else ILogger(OrderBookManager.component_name)
+		self.logger = logger if logger is not None else ILogger(OrderBookManagerSQLite.component_name)
 
 	def connect(self):
 		self.db_connection = sqlite3.connect(self.dbfile)
@@ -29,7 +29,7 @@ class OrderBookManager:
 	def create_order_book(self):
 
 		labels_str = "order_id STRING NOT NULL PRIMARY KEY, "
-		labels_str += ", ".join(OrderBookManager.labels()[1:])
+		labels_str += ", ".join(OrderBookManagerSQLite.labels()[1:])
 		request = f"CREATE TABLE orderbook ({labels_str})"
 
 		self._apply_request(request)
@@ -109,26 +109,35 @@ if __name__ == "__main__":
 	from melodb.loggers import ConsoleLogger, CompositeLogger
 
 	loggers = CompositeLogger([
-		ConsoleLogger(OrderBookManager.component_name)
+		ConsoleLogger(OrderBookManagerSQLite.component_name)
 	])
 
-	dummy_order = {
-		"order_id": "f50-2310",
-		"status": "open",  # Open/Closed
-		"symbol": "btcusd",  # EURUSD ...
-		"instrument": "fut",  # CFD, OPT, FUT
-		"type": "mkt",  # LMT, MKT
-		"side": "buy",  # BUY, SELL
-		"price": "2000",
-		"quantity": "1",
-		"open_ts": "odate",
-		"close_ts": "cdate"
-	}
+	# orderbook = OrderBookManagerMongo("orderbook-melo.db", loggers)
+	# orderbook.connect()
+	# orderbook.queue_order(dummy_order)
+	# dummy_order["order_id"] = "50"
+	# orderbook.update_order("f50-2310", dummy_order)
+	# print(orderbook.get_orders())
+	# orderbook.close()
 
-	orderbook = OrderBookManager("orderbook-melo.db", loggers)
-	orderbook.connect()
-	orderbook.queue_order(dummy_order)
-	dummy_order["order_id"] = "50"
-	orderbook.update_order("f50-2310", dummy_order)
-	print(orderbook.get_orders())
-	orderbook.close()
+	import pymongo
+
+	myclient = pymongo.MongoClient("mongodb://localhost:27017/")
+
+	mydb = myclient["mydatabase"]
+	mycol = mydb["orderbook"]
+
+	mydict = {"name": "John", "address": "Highway 37"}
+
+	x = mycol.insert_one(mydict)
+
+	loggers.info(myclient.list_database_names())
+	loggers.info(mydb.list_collection_names())
+
+	dblist = myclient.list_database_names()
+	if "mydatabase" in dblist:
+		loggers.info("The database exists.")
+
+	collist = mydb.list_collection_names()
+	if "orderbook" in collist:
+		print("The collection exists.")

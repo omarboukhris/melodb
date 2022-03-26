@@ -8,6 +8,9 @@ class Order:
 		BUY = "long"
 		SELL = "short"
 
+		LONG = "long"
+		SHORT = "short"
+
 	class Status:
 		OPEN = "open"
 		CLOSED = "closed"
@@ -17,7 +20,7 @@ class Order:
 		if logger is None:
 			self.logger = ILogger("Order_DataClass")
 
-		assert order.keys() == Order.labels, self.logger.error("Ill formed order dictionary")
+		assert set(order.keys()) == set(Order.labels()), self.logger.error("Ill formed order dictionary")
 
 		self.order_id = order["order_id"]
 		self.status = order["status"]
@@ -30,6 +33,9 @@ class Order:
 		self.open_ts = order["open_ts"]
 		self.close_ts = order["close_ts"]
 		self.forecast = order["forecast"]
+
+	def __str__(self):
+		return str(self.to_dict())
 
 	@staticmethod
 	def empty():
@@ -44,7 +50,7 @@ class Order:
 			quantity=0.,
 			open_ts="",
 			close_ts="",
-			forecast=0.
+			forecast=[0., 0.]
 		)
 
 	@staticmethod
@@ -54,12 +60,13 @@ class Order:
 			"status",      # Open/Closed
 			"symbol",      # EURUSD ...
 			"instrument",  # CFD, OPT, FUT
-			"type",        # LMT, MKT
+			"order_type",  # LMT, MKT
 			"side",        # BUY, SELL
 			"price",
 			"quantity",
 			"open_ts",     # timestamp
-			"close_ts"
+			"close_ts",
+			"forecast"
 		]
 
 	def to_dict(self):
@@ -68,11 +75,12 @@ class Order:
 			"status": self.status,
 			"symbol": self.symbol,
 			"instrument": self.instrument,
-			"type": self.order_type,
+			"order_type": self.order_type,
 			"side": self.side,
 			"price": self.price,
 			"quantity": self.quantity,
 			"open_ts": self.open_ts,
-			"close_ts": self.close_ts
+			"close_ts": self.close_ts,
+			"forecast": self.forecast,
 		}
 
