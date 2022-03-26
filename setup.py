@@ -14,6 +14,6 @@ setuptools.setup(
     project_urls = {
         "Bug Tracker": "https://github.com/omarboukhris"
     },
-    packages=['melodb'],
+    packages=setuptools.find_packages(),
     install_requires=['requests'],
 )
