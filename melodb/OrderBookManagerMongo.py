@@ -10,7 +10,7 @@ class OrderBookManagerMongo:
 
 	def __init__(self, dburl: str, logger: ILogger = ILogger(component_name)):
 		"""
-		:param dburl: *.db file path
+		:param dburl: mongodb url path
 		"""
 
 		self.dburl = dburl
@@ -66,6 +66,12 @@ class OrderBookManagerMongo:
 	def get_orders(self):
 		return self._select_request()
 
+	def delete_by_id(self, order_id: str):
+		query = {"_id": boi.ObjectId(order_id)}
+		orderbook_collection = self.db_connection["orderbook"]
+		query_result = orderbook_collection.delete_one(query)
+		self.logger.info(f"Deleted document/row : {query_result.deleted_count} / _id : {order_id}")
+
 	def _apply_request(self, request):
 		pass
 
@@ -95,16 +101,24 @@ class OrderBookManagerMongo:
 if __name__ == "__main__":
 	from melodb.loggers import ConsoleLogger, CompositeLogger
 
-	loggers = CompositeLogger([
-		ConsoleLogger(OrderBookManagerMongo.component_name)
-	])
+	orderbook = OrderBookManagerMongo(
+		"mongodb://localhost:27017/",
+		CompositeLogger([
+			ConsoleLogger(OrderBookManagerMongo.component_name)
+		])
+	)
+	orderbook.connect()
 
 	dummy_order = Order.empty()
-	orderbook = OrderBookManagerMongo("mongodb://localhost:27017/", loggers)
-	orderbook.connect()
 	orderbook.queue_order(dummy_order)
+
 	dummy_order.status = Order.Status.OPEN
 	orderbook.update_order("623fa650954fb28e8e421455", dummy_order)
 	for ordr in orderbook.get_orders():
 		print(ordr)
+
+	orderbook.delete_by_id("623fa650954fb28e8e421455")
+	for ordr in orderbook.get_orders():
+		print(ordr)
+
 	orderbook.close()

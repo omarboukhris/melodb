@@ -1,7 +1,6 @@
 
 from loggers import ILogger
 
-
 class Order:
 
 	class Side:
@@ -10,6 +9,9 @@ class Order:
 
 		LONG = "long"
 		SHORT = "short"
+
+		CALL = "long"
+		PUT = "short"
 
 	class Status:
 		OPEN = "open"

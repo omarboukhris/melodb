@@ -119,25 +119,3 @@ if __name__ == "__main__":
 	# orderbook.update_order("f50-2310", dummy_order)
 	# print(orderbook.get_orders())
 	# orderbook.close()
-
-	import pymongo
-
-	myclient = pymongo.MongoClient("mongodb://localhost:27017/")
-
-	mydb = myclient["mydatabase"]
-	mycol = mydb["orderbook"]
-
-	mydict = {"name": "John", "address": "Highway 37"}
-
-	x = mycol.insert_one(mydict)
-
-	loggers.info(myclient.list_database_names())
-	loggers.info(mydb.list_collection_names())
-
-	dblist = myclient.list_database_names()
-	if "mydatabase" in dblist:
-		loggers.info("The database exists.")
-
-	collist = mydb.list_collection_names()
-	if "orderbook" in collist:
-		print("The collection exists.")
