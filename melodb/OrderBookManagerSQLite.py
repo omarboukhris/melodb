@@ -112,10 +112,11 @@ if __name__ == "__main__":
 		ConsoleLogger(OrderBookManagerSQLite.component_name)
 	])
 
-	# orderbook = OrderBookManagerMongo("orderbook-melo.db", loggers)
-	# orderbook.connect()
-	# orderbook.queue_order(dummy_order)
-	# dummy_order["order_id"] = "50"
-	# orderbook.update_order("f50-2310", dummy_order)
-	# print(orderbook.get_orders())
-	# orderbook.close()
+	dummy_order = Order.empty().to_dict()
+	orderbook = OrderBookManagerSQLite("orderbook-melo.db", loggers)
+	orderbook.connect()
+	orderbook.queue_order(dummy_order)
+	dummy_order["order_id"] = "50"
+	orderbook.update_order("f50-2310", dummy_order)
+	print(orderbook.get_orders())
+	orderbook.close()
