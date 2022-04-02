@@ -32,6 +32,17 @@ class MongoLogger(ILogger):
 		log_collection = self.db_connection["logs"]
 		log_collection.insert_one(log_dict)
 
+	def _read_mongo_log(self, log_dict_request: dict, limit: int = 10):
+		if limit > 10:
+			limit = 10
+		if limit < 1:
+			limit = 10
+		log_collection = self.db_connection["logs"]
+		return log_collection\
+			.find(log_dict_request, {})\
+			.sort("date", pymongo.ASCENDING)\
+			.limit(limit)
+
 	def info(self, log_message: str):
 		log_dict = {
 			"type": "INFO",
@@ -58,4 +69,14 @@ class MongoLogger(ILogger):
 			"message": log_message
 		}
 		self._write_mongo_log(log_dict)
+
+	def get_last_logs(self, nb_logs: int = 10):
+		return self._read_mongo_log({}, nb_logs)
+
+
+if __name__ == "__main__":
+	mongoLoggger = MongoLogger("mglogger-test")
+
+	for log in mongoLoggger.get_last_logs(nb_logs=5):
+		print(log)
 
