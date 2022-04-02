@@ -3,6 +3,10 @@ from loggers import ILogger
 
 class Order:
 
+	class OrderType:
+		MKT = "market"
+		LMT = "limit"
+
 	class Side:
 		BUY = "long"
 		SELL = "short"

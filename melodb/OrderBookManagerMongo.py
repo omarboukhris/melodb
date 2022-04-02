@@ -103,14 +103,15 @@ class OrderBookManagerMongo:
 
 
 if __name__ == "__main__":
-	from melodb.loggers import ConsoleLogger, CompositeLogger, MongoLogger
+	from melodb.loggers import CompositeLogger
 
+	mongo_url = "mongodb://localhost:27017/"
 	orderbook = OrderBookManagerMongo(
-		"mongodb://localhost:27017/",
-		CompositeLogger([
-			ConsoleLogger(OrderBookManagerMongo.component_name),
-			MongoLogger(OrderBookManagerMongo.component_name)
-		])
+		mongo_url,
+		CompositeLogger.build_composite_logger(
+			OrderBookManagerMongo.component_name,
+			mongo_url
+		)
 	)
 	orderbook.connect()
 
