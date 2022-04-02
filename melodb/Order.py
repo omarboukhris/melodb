@@ -1,5 +1,5 @@
 
-from loggers import ILogger
+from melodb.loggers import ILogger
 
 class Order:
 
