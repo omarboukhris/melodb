@@ -8,7 +8,11 @@ class OrderBookManagerMongo:
 
 	component_name = "OrderBookManagerMongo"
 
-	def __init__(self, dburl: str, logger: ILogger = ILogger(component_name)):
+	def __init__(
+		self,
+		dburl: str = "mongodb://localhost:27017/",
+		logger: ILogger = ILogger(component_name)):
+
 		"""
 		:param dburl: mongodb url path
 		"""
@@ -20,7 +24,7 @@ class OrderBookManagerMongo:
 		self.logger = logger if logger is not None else ILogger(OrderBookManagerMongo.component_name)
 
 	def connect(self):
-		self.mongo_client = pymongo.MongoClient("mongodb://localhost:27017/")
+		self.mongo_client = pymongo.MongoClient(self.dburl)
 		self.db_connection = self.mongo_client["melo-db"]
 		self.connected = True
 
@@ -99,12 +103,13 @@ class OrderBookManagerMongo:
 
 
 if __name__ == "__main__":
-	from melodb.loggers import ConsoleLogger, CompositeLogger
+	from melodb.loggers import ConsoleLogger, CompositeLogger, MongoLogger
 
 	orderbook = OrderBookManagerMongo(
 		"mongodb://localhost:27017/",
 		CompositeLogger([
-			ConsoleLogger(OrderBookManagerMongo.component_name)
+			ConsoleLogger(OrderBookManagerMongo.component_name),
+			MongoLogger(OrderBookManagerMongo.component_name)
 		])
 	)
 	orderbook.connect()

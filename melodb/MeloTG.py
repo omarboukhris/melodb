@@ -17,6 +17,10 @@ class MeloTelegramHandler:
 		update.message.reply_text(ss)
 
 	@staticmethod
+	def test_args(update: Update, context: CallbackContext):
+		print(context.args)
+
+	@staticmethod
 	def unknown(update: Update, context: CallbackContext):
 		pass
 
@@ -29,6 +33,7 @@ if __name__ == "__main__":
 	updater.dispatcher.add_handler(CommandHandler('start', MeloTelegramHandler.start))
 	updater.dispatcher.add_handler(CommandHandler('menu', MeloTelegramHandler.start))
 	updater.dispatcher.add_handler(CommandHandler('help', MeloTelegramHandler.start))
+	updater.dispatcher.add_handler(CommandHandler('cmd', MeloTelegramHandler.test_args, pass_args=True))
 	updater.dispatcher.add_handler(MessageHandler(Filters.text, MeloTelegramHandler.unknown))
 	updater.dispatcher.add_handler(MessageHandler(Filters.command, MeloTelegramHandler.unknown))
 
